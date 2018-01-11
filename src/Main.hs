@@ -2,23 +2,12 @@
 
 module Main where
 
+import Control.Lens
 import Data.Monoid
-
-import Web.Scotty
-import Network.HTTP.Types
+import Data.Aeson.Lens (_String, key)
+import Network.Wreq
 
 main :: IO ()
 main = do
-  scotty 8080 $ do
-    get "/" $ do
-      text "Hello, world."
-
-    get "/hello/:name" $ do
-      name <- param "name"
-      text $ "Hello, " <> name <> "."
-
-    get "/redirect/to/root" $ do
-      status status302
-      setHeader "X-Foo-Bar" "bazqux"
-      redirect "/"
-
+  r <- get "http://httpbin.org/get"
+  print $ r ^. responseStatus . statusCode
